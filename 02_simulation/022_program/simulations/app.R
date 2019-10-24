@@ -64,7 +64,7 @@ ui <- fluidPage(
       textInput("groupingsim", "Group by Regions (region), Initial Poverty Level (initial_poverty_level), or Income Level (incomelevel) for Simulation?", value='region'),
       textInput("groupingspells", "Group by Regions (region), Initial Poverty Level (initial_poverty_level), or Income Level (incomelevel) for calculating growth rates?", value='region'),
       textInput("growthdynamics", "If Grouping by Initial Poverty Level, make growth rates dynamic? (Yes or No)", value='Yes'),
-      textInput('percentile', "Calculate special growth rates percentiles in spell file", value="50(10)90"),
+      textInput('percentile', "Calculate special growth rates percentiles in spell file", value="50 60 70 80 90"),
       textInput('high_scenario', "Specify percentile for high growth scenario", value="r80")
     ),
     

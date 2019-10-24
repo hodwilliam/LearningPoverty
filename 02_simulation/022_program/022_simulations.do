@@ -35,10 +35,10 @@ _simulation_dataset,    ifspell(if delta_adj_pct > -2 & delta_adj_pct < 4 & year
             ifsim(if lendingtype!="LNX" ) weight(aw=wgt) preference(1001) ///
             specialincludeassess(PIRLS LLECE TIMSS SACMEQ ) specialincludegrade(3 4 5 6) ///
             filename(simfile_preference_1001_regional_growth) ///
-            usefile("${clone}/02_simulation/022_program/special_simulation_spells_nopasec_weigthed_pref1000a.md") ///
+            usefile("${clone}/02_simulation/022_program/special_simulation_spells_nopasec_weigthed_pref1000a_p99.md") ///
             timss(science) enrollment(validated) population_2015(No) ///
             groupingsim(region) groupingspells(region) growthdynamics(Yes) ///
-            percentile(50(10)90)
+            percentile(50(1)99)
 
 
 *Run simulation with tabulations done by region and growth rates calculated using growth rates by initial poverty level

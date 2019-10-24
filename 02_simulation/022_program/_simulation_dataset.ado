@@ -259,7 +259,7 @@ program define _simulation_dataset, rclass
 
 	*Calculating global 90th, 80th and 70th percentiles:
 
-	forvalues i = `percentile' {
+	foreach i in `percentile' {
 		 egen delta_global_`i' = pctile(delta_adj_pct) if test != "EGRA", p(`i')
 	}
 	gsort -delta_adj_pct
@@ -267,7 +267,7 @@ program define _simulation_dataset, rclass
 	tabstat delta_global_90 , by(region)
 
 	*Calculating global 90th, 80th and 70th percentiles with weights
-	forvalues i = `percentile' {
+	foreach i in `percentile' {
 		gen delta_global_w_`i' = .
 	}
 	gen threshold="III"
@@ -275,7 +275,7 @@ program define _simulation_dataset, rclass
 	foreach t of local tr {
 		_pctile delta_adj_pct [weight = wgt] if threshold == "`t'" & test != "EGRA", percentiles(`percentile')
 				local counter=1
-				forvalues i = `percentile' {
+				foreach i in `percentile' {
 
 				replace delta_global_w_`i' = r(r`counter') if threshold == "`t'" & test != "EGRA"
 				local counter=`counter' + 1
@@ -307,7 +307,7 @@ program define _simulation_dataset, rclass
 
 	*Percentiles by wbregion:
 
-	forvalues i = `percentile' {
+	foreach i in `percentile' {
 		bysort  reg_n: egen delta_reg_`i' = pctile(delta_adj_pct) if test != "EGRA", p(`i')
 
 	}
@@ -319,7 +319,7 @@ program define _simulation_dataset, rclass
 	cap list countryname initial_adj_pct final_adj_pct delta_adj_pct test idgrade spell if delta_adj_pct > delta_reg_90 & !missing(delta_adj_pct) & region == "SSF"
 
 	*Calculating regional 90th, 8th and 70th percentiles with weights
-	forvalues i = `percentile' {
+	foreach i in `percentile' {
 		gen delta_reg_w_`i' = .
 	}
 
@@ -331,7 +331,7 @@ program define _simulation_dataset, rclass
 				local count=`r(N)'
 				*Only make change to regional if we have at least 3 regional spells
 				if `count'<3 {
-					forvalues i = `percentile' {
+					foreach i in `percentile' {
 						replace delta_reg_`i' = . if threshold == "`t'" & `groupingspells' == "`r'" & test != "EGRA"
 						}
 
@@ -339,7 +339,7 @@ program define _simulation_dataset, rclass
 				if `count'>=3 {
 					_pctile delta_adj_pct [weight = w] if threshold == "`t'" & `groupingspells' == "`r'" & test != "EGRA", percentiles(`percentile')
 					local counter=1
-					forvalues i = `percentile' {
+					foreach i in `percentile' {
 						replace delta_reg_w_`i' = r(r`counter') if threshold == "`t'" & `groupingspells' == "`r'" & test != "EGRA"
 						local counter=`counter' + 1
 						}
@@ -359,7 +359,7 @@ program define _simulation_dataset, rclass
 
 	*Percentiles by initial values:
 
-	forvalues i = `percentile' {
+	foreach i in `percentile' {
 		bysort  catinitial: egen delta_ini_`i' = pctile(delta_adj_pct) if test != "EGRA", p(`i')
 	}
 
@@ -368,7 +368,7 @@ program define _simulation_dataset, rclass
 
 		
 	*Average and percentile percentage changes in gap to frontier:
-	forvalues i =  `percentile' {
+	foreach i in  `percentile' {
 		*drop red_gap_`i'_irsat red_gap_`i'_irsat_extend red_gap_`i'_sas red_gap_`i' red_gap_global_`i' red_gap_global_`i'_extend  /* try tp create a variable does alreayd exist in your database */
 		bysort  `groupingspells': egen red_gap_`i' = pctile(pct_red_gap) if test != "EGRA" , p(`i')
 
@@ -421,7 +421,7 @@ egen red_gap_global_`i' = pctile(pct_red_gap) if test != "EGRA", p(`i')
 			import delimited "`usefile'", delimiter("|") varnames(1) clear
 
 			drop v1
-			drop v9
+			cap drop v9
 			drop if _n==1
 			*dropping delta_adj_pct, because it is dangerous to merge with this.
 			drop delta_adj_pct
@@ -505,7 +505,7 @@ egen red_gap_global_`i' = pctile(pct_red_gap) if test != "EGRA", p(`i')
 
 		}
 
-		forval i=`percentile' {
+		foreach i in `percentile' {
 			levelsof `groupingspells', local(rgn)
 			foreach var in `rgn' {
 				count if !missing(delta_reg_w_`i') & `groupingspells'=="`var'"
@@ -526,7 +526,7 @@ egen red_gap_global_`i' = pctile(pct_red_gap) if test != "EGRA", p(`i')
 			}
 		}
 
-		forval i=`percentile' {
+		foreach i in `percentile' {
 			su delta_global_w_`i'
 			replace delta_reg_w_`i' = `r(mean)' if delta_reg_w_`i' == .
 
@@ -575,7 +575,7 @@ egen red_gap_global_`i' = pctile(pct_red_gap) if test != "EGRA", p(`i')
 			*rename delta_adj_pct_r reduct_own // WARNING!!! NOT SURE THIS INTERPRETATION IS CORRECT. BRIAN CAN YOU CHECK?
 			rename delta_adj_pct    growth_own
 			generate growei_own = growth_own
-			forvalues i = `percentile' {
+			foreach i in `percentile' {
 				rename red_gap_`i'              reduct_r`i'
 				cap rename red_gap_global_`i'   reduct_g`i' //WARNING!!! WHY ONLY EXISTS FOR G90 ON YOUR FILE, BRIAN?
 				rename delta_reg_w_`i'          growei_r`i'
@@ -1004,6 +1004,9 @@ egen red_gap_global_`i' = pctile(pct_red_gap) if test != "EGRA", p(`i')
 				| input_flavor =="preference: `preference' | rate_flavor: growei | benchmark: _r70" ///
 				| input_flavor =="preference: `preference' | rate_flavor: growei | benchmark: _r80" ///
 				| input_flavor =="preference: `preference' | rate_flavor: growei | benchmark: _r90" ///
+				| input_flavor =="preference: `preference' | rate_flavor: growei | benchmark: _r95" ///
+				| input_flavor =="preference: `preference' | rate_flavor: growei | benchmark: _r99" ///
+
 
 			}
 
