@@ -19,7 +19,7 @@ ui <- fluidPage(
                    a(href="https://www.worldbank.org/en/topic/education/brief/learning-poverty", "Learning Poverty Page", style = "font-size:20px"),
                 h2("Start Simulation"),
                 
-                p("Click on the play button in the bottom right corner to launch the simulation and to see how quickly learning poverty can be reduced.. ", style = "font-size:20px"),
+                p("Click on the slider bar below the graph or the play button in the bottom right corner to launch the simulation and to see how quickly learning poverty can be reduced.. ", style = "font-size:20px"),
                 
                  width = 2
   ),
@@ -40,8 +40,9 @@ ui <- fluidPage(
   
 
   
-  tags$head(tags$style(type='text/css', ".slider-animate-button { font-size: 20pt !important; }"))
-  
+  tags$head(tags$style(type='text/css', ".slider-animate-button { font-size: 24pt !important; }")),
+  tags$head(tags$style(type='text/css', ".control-label { font-size: 18pt; }")),
+    tags$head(tags$style(type='text/css', ".irs-grid-text { font-size: 16pt; }"))
   )
 ) 
 )
@@ -195,7 +196,7 @@ server <- function(input, output) {
       pivot_wider(
                   names_from=growth_type,
                   values_from=c("pop_pov")) %>%
-    mutate(Label=factor(row_number(), labels=c("Number of Children in Learning Poverty")))
+    mutate(Label=factor(row_number(), labels=c("Number of Children (10-14) in Learning Poverty")))
       
     
     country_long_gl_text2 <-  millions_df() %>% 
@@ -213,8 +214,7 @@ server <- function(input, output) {
     
     kable(country_long_gl_text,
                         row.names = T,
-                        caption="Glboal Number of Children in Learning Poverty Under Different Growth Scenarios",
-                        format="html") %>%
+                        caption="Global Number of Children in Learning Poverty Under Different Growth Scenarios") %>%
       column_spec(1, width = "10em") %>%
       kable_styling(bootstrap_options = c("striped", "hover")) 
      

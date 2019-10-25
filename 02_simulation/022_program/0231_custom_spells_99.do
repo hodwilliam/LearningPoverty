@@ -1,4 +1,4 @@
-qui {
+noi {
 
   cd "${clone}\02_simulation\022_program
 
